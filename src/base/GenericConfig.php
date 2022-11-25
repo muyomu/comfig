@@ -4,7 +4,7 @@ namespace muyomu\config\base;
 
 abstract class GenericConfig
 {
-    private array $configData = array();
+    protected array $configData = array();
 
     /**
      * @return array
