@@ -49,8 +49,6 @@ class ConfigParser
             if (!is_array($defaultData[$key])){
                 if (gettype($fieldData[$key])==gettype($defaultData[$key]) || isset($fieldData[$key])){
                     $defaultData[$key] = $fieldData[$key];
-                }else{
-                    throw new FieldConfigException();
                 }
             }else{
                 $this->resolveConfigData($fieldData[$key],$defaultData[$key]);

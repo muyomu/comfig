@@ -9,7 +9,7 @@ class Configuration
 {
     private string $configField;
 
-    public function __construct(string $configField)
+    public function __construct(string $configField = '')
     {
         $this->configField = $configField;
     }
