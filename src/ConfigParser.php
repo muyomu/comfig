@@ -28,7 +28,7 @@ class ConfigParser
         $reflectionClass = $this->utility->getConfigClassInstance($configClassName);
         $attribute = $this->utility->getAttributeClassInstance($reflectionClass,Configuration::class);
         $configField = $attribute->newInstance()->getConfigField();
-        if ($this->checkForField($configField)){
+        if ($this->checkForAssocArray($configField)){
             $defaultData = $this->getDefaultConfigData($configClassName);
             return $this->resolveConfigData($GLOBALS[$configField], $defaultData);
         }else{
