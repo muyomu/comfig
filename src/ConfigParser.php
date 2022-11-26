@@ -28,7 +28,7 @@ class ConfigParser
         $reflectionClass = $this->utility->getConfigClassInstance($configClassName);
         $attribute = $this->utility->getAttributeClassInstance($reflectionClass,Configuration::class);
         $configField = $attribute->newInstance()->getConfigField();
-        if ($this->checkForAssocArray($configField)){
+        if ($this->checkForField($configField)){
             $defaultData = $this->getDefaultConfigData($configClassName);
             return $this->resolveConfigData($GLOBALS[$configField], $defaultData);
         }else{
@@ -54,8 +54,14 @@ class ConfigParser
     private function resolveConfigData(array &$fieldData, array &$defaultData):array{
         $keys = array_keys($defaultData);
         foreach ($keys as $key){
-            if (is_array($defaultData[$key]) || $this->checkForAssocArray($defaultData[$key])){
-                $this->resolveConfigData($fieldData[$key],$defaultData[$key]);
+            if (is_array($defaultData[$key])){
+                if ($this->checkForAssocArray($defaultData[$key])){
+                    $this->resolveConfigData($fieldData[$key],$defaultData[$key]);
+                }else{
+                    if (gettype($fieldData[$key]) == gettype($defaultData[$key]) || isset($fieldData[$key])){
+                        $defaultData[$key] = $fieldData[$key];
+                    }
+                }
             }else{
                 if (gettype($fieldData[$key]) == gettype($defaultData[$key]) || isset($fieldData[$key])){
                     $defaultData[$key] = $fieldData[$key];
