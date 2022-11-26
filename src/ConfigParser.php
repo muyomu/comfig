@@ -10,7 +10,11 @@ use ReflectionException;
 
 class ConfigParser
 {
+    /**
+     * @var ConfigUtility
+     */
     private ConfigUtility $utility;
+
 
     public function __construct()
     {
@@ -32,6 +36,10 @@ class ConfigParser
         }
     }
 
+    /**
+     * @param string $field
+     * @return bool
+     */
     private function checkForField(string $field):bool{
         if (isset($GLOBALS[$field])){
             return true;
@@ -46,17 +54,21 @@ class ConfigParser
     private function resolveConfigData(array &$fieldData, array &$defaultData):array{
         $keys = array_keys($defaultData);
         foreach ($keys as $key){
-            if (!is_array($defaultData[$key])){
-                if (gettype($fieldData[$key])==gettype($defaultData[$key]) || isset($fieldData[$key])){
+            if (is_array($defaultData[$key]) || $this->checkForAssocArray($defaultData[$key])){
+                $this->resolveConfigData($fieldData[$key],$defaultData[$key]);
+            }else{
+                if (gettype($fieldData[$key]) == gettype($defaultData[$key]) || isset($fieldData[$key])){
                     $defaultData[$key] = $fieldData[$key];
                 }
-            }else{
-                $this->resolveConfigData($fieldData[$key],$defaultData[$key]);
             }
         }
         return $defaultData;
     }
 
+    /**
+     * @param string $className
+     * @return array
+     */
     private function getDefaultConfigData(string $className):array{
         $configData = array();
         try {
@@ -68,5 +80,22 @@ class ConfigParser
 
         }
         return $configData;
+    }
+
+    /**
+     * @param array $item
+     * @return bool
+     */
+    private function checkForAssocArray(array $item):bool{
+        $index = 0;
+        $keys = array_keys($item);
+        foreach ($keys as $key){
+            if ($index == $key){
+                $index++;
+            }else{
+                return false;
+            }
+        }
+        return true;
     }
 }
